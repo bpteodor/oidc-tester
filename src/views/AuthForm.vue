@@ -3,7 +3,7 @@
     <b-card>
       <b-card-header>
         <b-form-group label-cols-sm="4" label-cols-lg="3" label="configuration" label-for="config">
-          <b-form-select id="config" v-model="config" :options="configs" @change="changeConfig"></b-form-select>
+          <b-form-select id="config" v-model="configName" :options="configNames" @change="changeConfig"></b-form-select>
         </b-form-group>
       </b-card-header>
 
@@ -31,16 +31,11 @@
           </b-form-group>
 
           <b-form-group label-cols-sm="4" label-cols-lg="3" label="code_challenge" label-for="code_challenge">
-            <b-form-input id="code_challenge" @input="updateAuthURL"></b-form-input>
+            <b-form-input id="code_challenge" v-model="form.codeChallenge" @input="updateAuthURL"></b-form-input>
           </b-form-group>
 
-          <b-form-group
-            label-cols-sm="4"
-            label-cols-lg="3"
-            label="code_challenge_method"
-            label-for="code_challenge_method"
-          >
-            <b-form-input id="code_challenge_method" @input="updateAuthURL"></b-form-input>
+          <b-form-group label-cols-sm="4" label-cols-lg="3" label="code_challenge_method" label-for="ccm">
+            <b-form-input id="ccm" v-model="form.codeChallengeMethod" @input="updateAuthURL"></b-form-input>
           </b-form-group>
 
           <b-form-group label-cols-sm="4" label-cols-lg="3" label="nonce" label-for="nonce">
@@ -71,7 +66,7 @@
         </b-form-group>
 
         <div>
-          <b-button block variant="primary">START</b-button>
+          <b-button block variant="primary" @click="startAuth">START</b-button>
         </div>
       </b-card-footer>
     </b-card>
@@ -79,64 +74,49 @@
 </template>
 
 <script>
+import configs from '../configs'
 export default {
   data() {
     return {
-      config: null,
-      configs: [],
+      configName: null,
+      configNames: [],
       form: {
         clientId: null,
         responseType: null,
         redirectUri: null,
         scope: null,
+        //
+        codeChallenge: null,
+        codeChallengeMethod: null,
       },
       authURL: "",
     };
   },
   methods: {
     changeConfig(x) {
-      console.log(`selected <${x.clientId}>`);
+      console.log(`selected <${x}>`);
       this.form = this.config;
       this.updateAuthURL(x);
     },
     updateAuthURL() {
-      this.authURL = `${this.config.authURL}?response_type=${this.form.responseType}&client_id=${this.form.clientId}&redirect_uri=${this.form.redirectUri}&scope=${this.form.scope}`
-      return;
+      this.authURL = `${this.config.authURL}?response_type=${this.form.responseType}&client_id=${this.form.clientId}&redirect_uri=${this.form.redirectUri}&scope=${this.form.scope}&state=${this.configName}`;
+      if (this.form.codeChallenge)
+        this.authURL = `${this.authURL}&code_challenge=${this.form.codeChallenge}&code_challenge_method=${this.form.codeChallengeMethod}`;
+    },
+    startAuth() {
+      document.location.href = this.authURL;
     },
   },
   computed: {
-    configNames() {
-      return Object.keys(this.configs);
-    },
+    config() {
+      return configs[this.configName]
+    }
   },
   mounted() {
-    this.configs = [
-      {
-        text: "demo@stihl-dealers",
-        value: {
-          authURL: "https://stihl-sso.com/auth/oauth2/consumer/authorize",
-          tokenURL: "https://stihl-sso.com/auth/oauth2/consumer/access_token",
-          clientId: "demo",
-          clientSecret: "demo",
-          responseType: "code",
-          redirectUri: "http://localhost:8080/login",
-          scope: "openid profile",
-        },
-      },{
-        text: "imow@stihl-customers",
-        value: {
-          authURL: "https://stihl-sso.com/auth/oauth2/consumer/authorize",
-          tokenURL: "https://stihl-sso.com/auth/oauth2/consumer/access_token",
-          clientId: "imow",
-          responseType: "code",
-          redirectUri: "http://localhost:8080/login",
-          scope: "openid profile",
-        },
-      },
-    ];
-    if (this.configs && this.configs.length > 0) {
-      this.config = this.configs[0].value;
-      this.changeConfig(this.config);
+    this.configNames = Object.keys(configs);
+    if (this.configNames && this.configNames.length > 0) {
+      this.configName = this.configNames[0];
+      this.changeConfig(this.configName);
     }
   },
 };

@@ -1,24 +1,19 @@
-import Vue from "vue"
-import VueRouter from "vue-router"
-import AuthForm from "./views/AuthForm.vue"
+import Vue from "vue";
+import VueRouter from "vue-router";
+import AuthForm from "./views/AuthForm.vue";
+import Callback from "./views/Callback.vue";
 
 Vue.use(VueRouter);
 
 const routes = [
-  {
-    path: "/",
-    name: "Home",
-    component: AuthForm,
-  },
-  {
-    path: "/about",
-    name: "About",
-    component: () => import("./views/About.vue"),
-  },
+  { path: "/", component: AuthForm },
+  { path: "/stihlmediapool-dev/authCallback.htm", component: Callback },
+  { path: "/login", component: Callback },
+  { path: "/about", component: () => import("./views/About.vue") },
 ];
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: "history",
   routes,
 });
 
