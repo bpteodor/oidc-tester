@@ -1,0 +1,14 @@
+
+// define variables to customize bootstrap here
+
+//$body-bg: #fff;
+//$body-color: #000;
+$theme-colors: (
+  "primary": #2cc185,
+  //"secondary": #20c155
+);
+
+@import 'node_modules/bootstrap/scss/bootstrap';
+@import 'node_modules/bootstrap-vue/src/index.scss';
+
+// add custom styling here
