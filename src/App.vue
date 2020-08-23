@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <Header />
-    <AuthForm />
+    <router-view></router-view>
     <footer />
   </div>
 </template>
