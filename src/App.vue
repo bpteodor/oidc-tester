@@ -1,10 +1,8 @@
 <template>
   <div id="app">
     <Header />
-
     <AuthForm />
-
-    <footer></footer>
+    <footer />
   </div>
 </template>
 
