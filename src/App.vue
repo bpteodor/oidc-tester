@@ -12,7 +12,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import Header from "./components/Header.vue";
 import Footer from "./components/Footer.vue";
-import AuthForm from "./components/AuthForm.vue";
+import AuthForm from "./views/AuthForm.vue";
 
 @Component({
   components: {
